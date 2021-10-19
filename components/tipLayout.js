@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import { Menu, Popover, Transition } from '@headlessui/react'
 import { SearchIcon } from '@heroicons/react/solid'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
-
+import { MailIcon } from '@heroicons/react/solid'
 import TipJar from './tipJar'
 const user = {
   name: 'Chelsea Hagon',
@@ -197,17 +197,45 @@ export default function TipJarLayout(props) {
 
       <div className="py-6">
         <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="hidden lg:block lg:col-span-3 xl:col-span-2 ">
+          <div className="hidden xl:block xl:col-span-1 ">
             <div aria-label="Sidebar" className="sticky top-6 divide-y divide-gray-300 border-2 border-dashed border-gray-300 rounded-lg">
-              hello
+              blank
             </div>
           </div>
-          <div className="hidden lg:block lg:col-span-9 xl:col-span-6">
-            <div aria-label="Sidebar" className="sticky top-6 divide-y divide-gray-300 border-2 border-dashed border-gray-300 rounded-lg">
-              <TipJar></TipJar>
-            </div>
+
+          <div className="lg:block lg:col-span-8 xl:col-span-6 ">
+            <div id="abc123" aria-label="Sidebar" className="sticky top-6 divide-y divide-gray-300 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden
+            h-screen min-h-screen max-h-screen">
+              <div id="matterjscontainer" className="max-w-7xl">
+      {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}
+      <canvas id="matterjs" className="mx-auto"></canvas>
+      <TipJar className=""></TipJar>
+
+              
+      </div>
+
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 grid justify-items-center object-none object-bottom">
+    <dev key="actions"className="bg-white shadow overflow-hidden rounded-md px-6 py-4">
+    <button
+        type="button"
+        className="mr-3 inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        <MailIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
+        Button text
+      </button>
+      <button
+        type="button"
+        className="ml-3 inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        <MailIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
+        Button text
+      </button>
+        </dev>
+    </div>
+    </div>
+
           </div>
-          <aside className="hidden xl:block xl:col-span-4 border-2 border-dashed border-gray-300 rounded-lg">
+          <aside className="lg:col-span-4 xl:col-span-4 border-2 border-dashed border-gray-300 rounded-lg">
             <main className="sticky top-6 space-y-4 ">
             What is Lorem Ipsum?
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.

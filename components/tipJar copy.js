@@ -35,7 +35,7 @@ class TipJar extends React.Component {
 
       var w = canvas.width;
       var h = canvas.height;
-      h = window.innerHeight*0.65
+      h = window.innerHeight/2
       // h = 550
       // w= 545
       console.log("w")
@@ -45,12 +45,12 @@ class TipJar extends React.Component {
         canvas: canvas,
         engine: engine,
         options: {
-          wireframes: false,
+          wireframes: true,
           hasBounds: true,
           background:"transparent",
           pixelRatio: 'auto',
           height: h,
-          width: h*1.4,
+          width: w*3,
         }
       });
 
@@ -148,7 +148,7 @@ class TipJar extends React.Component {
     }
     
 for(var i = 0; i < 10; i++){
-  const bitcoin = Bodies.circle(getRandomInt(600), getRandomInt(600), 15, {
+  const bitcoin = Bodies.circle(getRandomInt(600), getRandomInt(600), 14, {
     restitution: rest,
     render: {
       sprite: {
@@ -217,11 +217,11 @@ for(var i = 0; i < 10; i++){
       Render.run(render);
       World.add(engine.world, tips);
       Render.setPixelRatio(render, 'auto')
-      // Render.lookAt(render, walls, Matter.Vector.create(500,500));
-      Render.lookAt(render, walls, {
-        x: 100,
-        y: 400
-      });
+      Render.lookAt(render, Composite.allBodies(engine.world), Matter.Vector.create(0,500));
+      // Render.lookAt(render, Composite.allBodies(engine.world), {
+      //   x: 100,
+      //   y: 10000
+      // });
       // keep the mouse in sync with rendering
       render.mouse = mouse;
       window.addEventListener('load', function () {
