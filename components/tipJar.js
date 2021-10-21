@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import Matter, { Body, Constraint } from "matter-js";
 import { borderRadius, width } from "tailwindcss/defaultTheme";
 import {isMobile, mobileModel} from 'react-device-detect';
+import $ from 'jquery';
 
 class TipJar extends React.Component {
     constructor(props) {
@@ -24,18 +25,24 @@ class TipJar extends React.Component {
       var engine = Engine.create({
         // positionIterations: 20
       });
-  
+      engine.enableSleeping = true;
+
+      var mattJSContainer = $('#matterjscontainer')
+      console.log(mattJSContainer.width())
+      console.log(mattJSContainer.height())
       var canvas = document.getElementById("matterjs");
-      var v = document.getElementById("abc123");
-      canvas.classList.add("mx-auto")
+
+      // var v = document.getElementById("abc123");
+      // mattJSContainer.addClass("mx-auto")
+      // mattJSContainer.addClass("h-full")
       canvas.classList.add("w-full")
       canvas.classList.add("min-w-full")
-      canvas.classList.add("h-full")
-      canvas.classList.add("min-h-full")
+      canvas.classList.add("min-h-65")      
+      canvas.classList.add("max-h-70")
 
-      var w = canvas.width;
-      var h = canvas.height;
-      h = window.innerHeight*0.65
+      var w = mattJSContainer.width();
+      var h = mattJSContainer.height();
+      // h = window.innerHeight*0.65
       // h = 550
       // w= 545
       console.log("w")
@@ -47,27 +54,31 @@ class TipJar extends React.Component {
         options: {
           wireframes: false,
           hasBounds: true,
-          background:"transparent",
+          showSleeping: false,
+          background: "transparent",
           pixelRatio: 'auto',
           height: h,
-          width: h*1.4,
+          width: w,
         }
       });
+    // render.options.height = mattJSContainer.height()
+    // render.options.width = mattJSContainer.height()
 
   
     var rest = 0.3, 
       space = 600 / 5;
-    const boundaryThickness = 7.5
+    const boundaryThickness = 8
 
      // Bottom boundary
-     var bWidth = 260;
+     
+     var bWidth = w/3;
      var bX = ((w/3)-bWidth)
      // desktops x
-     var oX = (w/2) + bWidth
+     var oX = (canvas.width/2) 
 
      // mobile x
      console.log('window width')
-     console.log(window.innerWidth)
+     console.log(oX)
       if(isMobile){
         console.log("Is mobile")
         bWidth = window.innerWidth/2
@@ -80,7 +91,7 @@ class TipJar extends React.Component {
         // bWidth = window.innerWidth/2
 
       // Desktop Left X value
-      var lX = (w/2) + (bWidth/2)-20
+      var lX = (w/2) + bWidth - 20
       // Mobile Left X value
       if(isMobile){
         lX = oX - (bWidth/2)-20
@@ -94,18 +105,25 @@ class TipJar extends React.Component {
       //   chamfer: {radius: [5, 5, 5, 5]},
       // })
 
-     var midRing = Bodies.rectangle(oX, 550, bWidth, boundaryThickness, { isStatic: true, 
+     var midRing = Bodies.rectangle(oX*1.065, 545, bWidth*1.5, boundaryThickness, { isStatic: true, 
+      restitution: 0,
       chamfer: {radius: [5, 5, 5, 5]},
       collisionFilter: {
         category: 'no-collide'
     },
+    render: {
+      fillStyle: 'grey',
+      strokeStyle: 'grey',
+    },
     })
 
-    var topBottom = Bodies.rectangle(oX, 650, bWidth-25, boundaryThickness, { isStatic: true, 
+    var topBottom = Bodies.rectangle(oX*1.065, 705, bWidth*1.32, boundaryThickness, { isStatic: true, 
+      restitution: 0,
       chamfer: {radius: [5, 5, 5, 5]},
     })
 
-    var midBottom = Bodies.rectangle(oX, 660, bWidth-10, boundaryThickness*5, { isStatic: true, 
+    var midBottom = Bodies.rectangle(oX*1.065, 720, bWidth*1.32, boundaryThickness*5.5, { isStatic: true, 
+      restitution: 0.1,
       chamfer: {radius: [5, 5, 5, 5]},
       render: {
         fillStyle: 'transparent',
@@ -113,7 +131,8 @@ class TipJar extends React.Component {
       },
     })
 
-    var bottomBottom = Bodies.rectangle(oX, 675, bWidth-30, boundaryThickness, { isStatic: true, 
+    var bottomBottom = Bodies.rectangle(oX*1.065, 725, bWidth*1.3, boundaryThickness, { isStatic: true, 
+      restitution: 0.1,
       chamfer: {radius: [5, 5, 5, 5]},
     })
 
@@ -123,39 +142,54 @@ class TipJar extends React.Component {
     
       
      // Right boundary
-     var right = Bodies.rectangle(rX, 430, boundaryThickness, 500, { isStatic: true, 
+     var right = Bodies.rectangle(rX, 500, boundaryThickness, 460, { isStatic: true, 
       chamfer: {radius: [5, 5, 5, 5]},
+      render: {
+        fillStyle: 'black',
+        strokeStyle: 'black',
+      },
       angle: 3.3,
     })
+    console.log("midRing")
+    console.log(midRing.axes)
     // right.position.x =30
     //135 , 151 
      //Left boundary
     //  var left = Bodies.rectangle(-100, 300, boundaryThickness, 600, { isStatic: true });
-     var left = Bodies.rectangle(lX, 430, boundaryThickness, 500, { isStatic: true, 
+     var left = Bodies.rectangle(lX, 500, boundaryThickness, 460, { isStatic: true, 
       chamfer: {radius: [5, 5, 5, 5]},
+      render: {
+        fillStyle: 'black',
+        strokeStyle: 'black',
+      },
       angle: 3,
     })
     //3
 
      var walls = [
-      topBottom, midBottom, bottomBottom, midRing, right, left,
+      right, left, topBottom, midBottom, bottomBottom,
     ];
 
+    // var bedrock = Bodies.rectangle(w, canvas.height*1.15, w*h, boundaryThickness, { isStatic: true, 
+    //   chamfer: {radius: [5, 5, 5, 5]},
+    // })
+
+    // World.add(engine.world, [bedrock]);
 
     var tips = []
     function getRandomInt(max) {
       return Math.floor(Math.random() * max);
     }
     
-for(var i = 0; i < 10; i++){
-  const bitcoin = Bodies.circle(getRandomInt(600), getRandomInt(600), 15, {
+for(var i = 0; i < 100; i++){
+  const bitcoin = Bodies.circle(w, 0-h*2, 14, {
     restitution: rest,
     render: {
       sprite: {
         texture: "../images/crypto/svg/color/btc.svg",
         // texture: "../images/crypto/128/color/btc.png",
 
-        xScale: 0.9,
+        xScale: 0.9, //0.35 per $
         yScale: 0.9
       }
     }
@@ -168,7 +202,7 @@ for(var i = 0; i < 10; i++){
   }else{
     a = 14
   }
-  const eth = Bodies.circle(getRandomInt(600), getRandomInt(600), a, {
+  const eth = Bodies.circle(w, 0-h*2, a, {
     restitution: rest,
     render: {
       sprite: {
@@ -178,8 +212,18 @@ for(var i = 0; i < 10; i++){
       }
     }
   });
+  // if(a = 40){
+  //   Matter.Body.setDensity(eth, 10)
+  // }else{
+  //   Matter.Body.setDensity(eth, 1)
+
+  // }
+  Matter.Sleeping.update([eth], 1)
+  Matter.Sleeping.update([bitcoin], 1)
+  // Matter.Sleeping.set(eth, true);
   tips.push(eth)
   tips.push(bitcoin)
+
   Events.on(engine, 'beforeUpdate', function(event) {
     // Body.scale(bitcoin, 1.01,1.01);
   })
@@ -251,7 +295,13 @@ for(var i = 0; i < 10; i++){
 
     })
     window.addEventListener('resize', () => { 
-      var a = document.getElementById("matterjscontainer")
+      // React.findDOMNode('matterjscontainer')
+      // var a = document.getElementById("matterjscontainer")
+      // var v = ReactDOM.findDOMNode(this).parentNode.getElementById('matterjscontainer')
+      console.log("222")
+      // console.log(v.width)
+      // console.log(v.height)
+
 
       // render.bounds.max.x = a.style.maxWidth;
       // render.bounds.max.y = a.style.maxHeight;

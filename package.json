@@ -12,6 +12,7 @@
     "@heroicons/react": "^1.0.4",
     "@tailwindcss/forms": "^0.3.4",
     "gray-matter": "^4.0.2",
+    "jquery": "^3.6.0",
     "matter-js": "^0.17.1",
     "next": "^11.0.0",
     "react": "17.0.2",

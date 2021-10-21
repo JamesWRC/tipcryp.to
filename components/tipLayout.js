@@ -1,5 +1,5 @@
 
-import { Fragment } from 'react'
+import { Fragment, useRef } from 'react'
 import { Menu, Popover, Transition } from '@headlessui/react'
 import { SearchIcon } from '@heroicons/react/solid'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
@@ -31,6 +31,7 @@ function classNames(...classes) {
 }
 
 export default function TipJarLayout(props) {
+  const matterJSContainerRef = useRef(null);
   return (
     <div className="min-h-screen bg-gray-100">
       <Popover
@@ -203,13 +204,13 @@ export default function TipJarLayout(props) {
             </div>
           </div>
 
-          <div className="lg:block lg:col-span-8 xl:col-span-6 ">
-            <div id="abc123" aria-label="Sidebar" className="sticky top-6 divide-y divide-gray-300 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden
-            h-screen min-h-screen max-h-screen">
-              <div id="matterjscontainer" className="max-w-7xl">
+          <div  className="lg:block lg:col-span-8 xl:col-span-6 ">
+            <div aria-label="Sidebar" className="sticky top-6 divide-y divide-gray-300 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden
+            ">
+              <div id="matterjscontainer" className="max-w-7xl" ref={node => matterJSContainerRef.current = node}>
       {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}
       <canvas id="matterjs" className="mx-auto"></canvas>
-      <TipJar className=""></TipJar>
+      <TipJar className="mx-auto" matterJSContainerRef={matterJSContainerRef}></TipJar>
 
               
       </div>
