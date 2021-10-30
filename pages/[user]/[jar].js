@@ -6,7 +6,12 @@ const Post = () => {
   const user = router.query.user 
   const jar = router.query.jar ? router.query.jar : 'none' // should add a jar not found kinda thing here
 //   return <p>jar: {user} {jar}</p>
-return <TipJarLayout></TipJarLayout>
+return <>
+
+  <TipJarLayout></TipJarLayout>
+
+</>
+
 // return <TipJar></TipJar>
 
 }

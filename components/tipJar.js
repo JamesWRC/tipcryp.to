@@ -7,6 +7,7 @@ import $ from 'jquery';
 
 //tip jar min width is 725px or hight is 550px
 
+const DBEDROCK_LEVEL = "BEDROCK"
 
 class TipJar extends React.Component {
   constructor(props) {
@@ -14,15 +15,18 @@ class TipJar extends React.Component {
     this.state = {};
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    
     var Engine = Matter.Engine,
       Render = Matter.Render,
       Bodies = Matter.Bodies,
       Mouse = Matter.Mouse,
       MouseConstraint = Matter.MouseConstraint,
-      Composite = Matter.Composite;
+      Composite = Matter.Composite,
+      Events = Matter.Events;
     var engine = Engine.create({
-      // positionIterations: 20
+      // positionIterations: 20,
+      // velocityIterations: 20,
     });
     engine.enableSleeping = true;
 
@@ -35,18 +39,19 @@ class TipJar extends React.Component {
     canvas.classList.add("min-w-full")
     canvas.classList.add("min-h-65")
     canvas.classList.add("max-h-70")
-    
+
     // var w = mattJSContainer.width();
     // var h = mattJSContainer.height();
     var w = mattJSContainer.width();
     var h = mattJSContainer.height();
-    if(isMobile){
-      h/=2
-      w/=2
+    if (isMobile) {
+      h /= 2
+      w /= 2
     }
     var render = Render.create({
       canvas: canvas,
       engine: engine,
+      
       options: {
         wireframes: false,
         hasBounds: true,
@@ -60,9 +65,6 @@ class TipJar extends React.Component {
     var rest = 0.3;
     // Array of walls for the tipjar - currently used for desktop  
     var walls = [];
-    function desktopJar(){
-    const boundaryThickness = 8
-
     // Bottom boundary
     var bWidth = w / 3;
 
@@ -72,84 +74,154 @@ class TipJar extends React.Component {
 
     var rX = oX + bWidth * 0.925;
 
-
-    // Mid ring, decided not to add however leaving it here for future use.
-    
-    // var midRing = Bodies.rectangle(oX * 1.065, 545, bWidth * 1.5, boundaryThickness, {
-    //   isStatic: true,
-    //   restitution: 0,
-    //   chamfer: { radius: [5, 5, 5, 5] },
-    //   collisionFilter: {
-    //     category: 'no-collide'
-    //   },
-    //   render: {
-    //     fillStyle: 'grey',
-    //     strokeStyle: 'grey',
-    //   },
-    // })
+    function desktopJar() {
+      const boundaryThickness = 8
 
 
-    
-    // Base of Jar
-    var topBottom = Bodies.rectangle(oX * 1.065, bWidth * 3.2, bWidth * 1.32, boundaryThickness, {
+
+
+      // Mid ring, decided not to add however leaving it here for future use.
+
+      // var midRing = Bodies.rectangle(oX * 1.065, 545, bWidth * 1.5, boundaryThickness, {
+      //   isStatic: true,
+      //   restitution: 0,
+      //   chamfer: { radius: [5, 5, 5, 5] },
+      //   collisionFilter: {
+      //     category: 'no-collide'
+      //   },
+      //   render: {
+      //     fillStyle: 'grey',
+      //     strokeStyle: 'grey',
+      //   },
+      // })
+
+
+
+      // Base of Jar
+      var topBottom = Bodies.rectangle(oX * 1.065, bWidth * 3.2, bWidth * 1.32, boundaryThickness, {
+        label: JSON.stringify({
+          name: 'topBottom',
+          type: 'wall',
+          fastSlow: true,
+        }),
+        isStatic: true,
+        restitution: 0,
+        chamfer: { radius: [5, 5, 5, 5] },
+      });
+
+      var midBottom = Bodies.rectangle(oX * 1.065, bWidth * 3.259, bWidth * 1.32, boundaryThickness * 5.5, {
+        label: JSON.stringify({
+          name: 'midBottom',
+          type: 'wall',
+          fastSlow: true,
+        }),
+        isStatic: true,
+        restitution: 0.1,
+        chamfer: { radius: [5, 5, 5, 5] },
+        render: {
+          fillStyle: 'transparent',
+          strokeStyle: 'transparent',
+        },
+      });
+
+      var bottomBottom = Bodies.rectangle(oX * 1.065, bWidth * 3.3, bWidth * 1.3, boundaryThickness, {
+        label: JSON.stringify({
+          name: 'bottomBottom',
+          type: 'wall',
+          fastSlow: false,
+        }),
+        isStatic: true,
+        restitution: 0.1,
+        chamfer: { radius: [5, 5, 5, 5] },
+      });
+
+      // Right boundary
+      var right = Bodies.rectangle(rX, bWidth * 2.275, boundaryThickness, bWidth * 2.1, {
+        label: JSON.stringify({
+          name: 'right',
+          type: 'wall',
+          fastSlow: false,
+        }),
+        isStatic: true,
+        chamfer: { radius: [5, 5, 5, 5] },
+        render: {
+          fillStyle: 'black',
+          strokeStyle: 'black',
+        },
+        angle: 3.31,
+      });
+
+      // left boundary
+      var left = Bodies.rectangle(lX, bWidth * 2.275, boundaryThickness, bWidth * 2.1, {
+        label: JSON.stringify({
+          name: 'left',
+          type: 'wall',
+          fastSlow: false,
+        }),
+        isStatic: true,
+        chamfer: { radius: [5, 5, 5, 5] },
+        render: {
+          fillStyle: 'black',
+          strokeStyle: 'black',
+        },
+        angle: 3,
+      });
+
+      walls = [
+        left, right, topBottom, midBottom, bottomBottom,
+      ];
+
+
+      Composite.add(engine.world, walls);
+
+      var dBedrock = Bodies.rectangle(bottomBottom.position.x, bottomBottom.position.y*4, 99999, 20, {
+        label: JSON.stringify({
+          name: 'dBedrock',
+          type: DBEDROCK_LEVEL,
+          fastSlow: false,
+        }),
+        isStatic: true,
+        render: {
+          fillStyle: 'red',
+          strokeStyle: 'red',
+        },
+      });
+
+      // Used in debug to see where the limit for static items will be
+      var staticTop = Bodies.rectangle(bottomBottom.position.x, bWidth, 99999, 20, {
+        label: JSON.stringify({
+          name: 'staticTop',
+          type: "wall",
+          fastSlow: false,
+        }),
+        isStatic: true,
+        collisionFilter: {
+          category: 'no-collide'
+        },
+        render: {
+          fillStyle: 'red',
+          strokeStyle: 'red',
+        },
+      });
+
+      Composite.add(engine.world, staticTop);
+
+      Composite.add(engine.world, dBedrock);
+
+    }
+
+    var mCenterX = w / 2;
+    var mCenterY = h / 2;
+
+
+    var mCenter = Bodies.rectangle(mCenterX, mCenterY, 3, 3, {
+      label: JSON.stringify({
+        name: 'mCenter',
+        type: "wall",
+        fastSlow: false,
+      }),
       isStatic: true,
-      restitution: 0,
-      chamfer: { radius: [5, 5, 5, 5] },
-    });
-
-    var midBottom = Bodies.rectangle(oX * 1.065, bWidth * 3.259, bWidth * 1.32, boundaryThickness * 5.5, {
-      isStatic: true,
-      restitution: 0.1,
-      chamfer: { radius: [5, 5, 5, 5] },
-      render: {
-        fillStyle: 'transparent',
-        strokeStyle: 'transparent',
-      },
-    });
-
-    var bottomBottom = Bodies.rectangle(oX * 1.065, bWidth * 3.3, bWidth * 1.3, boundaryThickness, {
-      isStatic: true,
-      restitution: 0.1,
-      chamfer: { radius: [5, 5, 5, 5] },
-    });
-
-    // Right boundary
-    var right = Bodies.rectangle(rX, bWidth * 2.275, boundaryThickness, bWidth * 2.1, {
-      isStatic: true,
-      chamfer: { radius: [5, 5, 5, 5] },
-      render: {
-        fillStyle: 'black',
-        strokeStyle: 'black',
-      },
-      angle: 3.31,
-    });
-
-    // left boundary
-    var left = Bodies.rectangle(lX, bWidth * 2.275, boundaryThickness, bWidth * 2.1, {
-      isStatic: true,
-      chamfer: { radius: [5, 5, 5, 5] },
-      render: {
-        fillStyle: 'black',
-        strokeStyle: 'black',
-      },
-      angle: 3,
-    });
-
-    walls = [
-      left, right, topBottom, midBottom, bottomBottom,
-    ];
-
-
-    Composite.add(engine.world, walls);
-  }
-
-    var mCenterX = w/2;
-    var mCenterY = h/2;
-
-
-    var mCenter = Bodies.rectangle(mCenterX, mCenterY , 3, 3, {
-      isStatic: true,
-      restitution: 0,
+      restitution: 1,
       collisionFilter: {
         category: 'no-collide'
       },
@@ -160,7 +232,12 @@ class TipJar extends React.Component {
     });
 
 
-    var mBedrock = Bodies.rectangle(w, h, 10000, 1, {
+    var mBedrock = Bodies.rectangle(w, (h+30*0.45), 10000, 30, {
+      label: JSON.stringify({
+        name: 'mBedrock',
+        type: DBEDROCK_LEVEL,
+        fastSlow: false,
+      }),
       isStatic: true,
       restitution: rest,
       render: {
@@ -169,12 +246,11 @@ class TipJar extends React.Component {
       },
     });
 
-    if(isMobile || (window.innerHeight < 500 && window.innerWidth < 725)){
+    if (isMobile || (window.innerHeight < 500 && window.innerWidth < 725)) {
       Composite.add(engine.world, mCenter);
       Composite.add(engine.world, mBedrock);
-    }else{
+    } else {
       desktopJar()
-      displayTipCoins()
       // Composite.add(engine.world, walls);
     }
 
@@ -184,57 +260,109 @@ class TipJar extends React.Component {
 
     // World.add(engine.world, [bedrock]);
 
-    function displayTipCoins(){
-    var tips = []
-    function getRandomInt(max) {
-      return Math.floor(Math.random() * max);
-    }
-
-    for (var i = 0; i < 100; i++) {
-      const bitcoin = Bodies.circle(w, 0 - h * 2, 14, {
-        restitution: rest,
-        render: {
-          sprite: {
-            texture: "../images/crypto/svg/color/btc.svg",
-            // texture: "../images/crypto/128/color/btc.png",
-
-            xScale: 0.9, //0.35 per $
-            yScale: 0.9
-          }
-        }
-      }, 5);
-
-      var a = getRandomInt(40)
-
-      if (a > 35) {
-        a = 40
-      } else {
-        a = 14
+    async function displayTipCoins() {
+      var tips = []
+      function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
       }
-      const eth = Bodies.circle(w, 0 - h * 2, a, {
-        restitution: rest,
-        render: {
-          sprite: {
-            texture: "../images/crypto/svg/color/eth.svg",
-            xScale: a > 35 ? 2.5 : 0.9,
-            yScale: a > 35 ? 2.5 : 0.9
+
+      const maxCoins = 300;
+      for (var i = 0; i < maxCoins; i++) {
+        var coin;
+        var spawnOffset = 0
+        if (i == maxCoins / 2) {
+          var randOffset = getRandomInt(w / 4)
+          if (getRandomInt(2)) {
+            spawnOffset -= randOffset
+          } else {
+            spawnOffset += randOffset
           }
         }
-      });
-      
-      // if(a = 40){
-      //   Matter.Body.setDensity(eth, 0.5)
+        // const bitcoin = Bodies.circle(w / 2 + spawnOffset, 0 - h * 2, 18, {
+        //   restitution: 1,
+        //   slop: 0,
+        //   render: {
+        //     sprite: {
+        //       texture: "../images/crypto/svg/color/btc.svg",
+        //       // texture: "../images/crypto/128/color/btc.png",
 
-      // }
-      // Matter.Sleeping.update([eth], 5)
-      // Matter.Sleeping.update([bitcoin], 5)
-      // Matter.Sleeping.set(eth, true);
-      tips.push(eth)
-      tips.push(bitcoin)
+        //       xScale: 1.2, //0.35 per $
+        //       yScale: 1.2
+        //     }
+        //   }
+        // }, 5);
+        const bitcoin = Bodies.circle(w / 2 + spawnOffset, 0 - h * 2, 18, {
+          restitution: 1,
+          slop: 0,
+          render: {
+            sprite: {
+              texture: "../images/crypto/svg/color/btc.svg",
+              // texture: "../images/crypto/128/color/btc.png",
 
-      Body.set(eth, {})
-    }
-    Composite.add(engine.world, tips);
+              xScale: 1.1, //0.35 per $
+              yScale: 1.1
+            }
+          }
+        }, 5);
+
+        var a = getRandomInt(40)
+
+        if (a > 35) {
+          a = 40
+        } else {
+          a = 18
+        }
+        const eth = Bodies.circle(w / 2 + spawnOffset, 0 - h * 2, a, {
+          restitution: 1,
+          slop: 0,
+          render: {
+            sprite: {
+              texture: "../images/crypto/svg/color/eth.svg",
+              xScale: a > 35 ? 2.5 : 1.2,
+              yScale: a > 35 ? 2.5 : 1.2
+            }
+          }
+        });
+
+        if (getRandomInt(2) == 1) {
+          coin = eth
+        } else {
+          coin = bitcoin
+        }
+
+        // Extends the top 10% of coins so they have time to rest
+        var coinLabel = {
+          name: 'xCoin',
+          type: 'coin',
+          fastSlow: true,
+        }
+        if(i >= maxCoins*0.9){
+          // coin.restitution = 0.03
+          coinLabel.fastSlow = false
+        }
+
+        if(isMobile){
+          coin.restitution = 0.5
+        }
+
+        coin.label = JSON.stringify(coinLabel)
+
+        // if(a = 40){
+        //   Matter.Body.setDensity(coin, 1)
+        // }else{
+        //   Matter.Body.setDensity(coin, 0.05)
+        // }
+        // Matter.Sleeping.update([eth], 5)
+        // Matter.Sleeping.update([bitcoin], 5)
+        // Matter.Sleeping.set(eth, true);
+        // tips.push(eth)
+        await new Promise(r => setTimeout(r, getRandomInt(100)));
+
+        Composite.add(engine.world, coin);
+        // tips.push(bitcoin)
+
+        // Body.set(eth, {})
+      }
 
     }
 
@@ -274,45 +402,41 @@ class TipJar extends React.Component {
     // keep the mouse in sync with rendering
     render.mouse = mouse;
     // Engine.run(engine);
-    Matter.Runner.run(engine)
+
+    Matter.Runner.run(engine);
     Render.run(render);
-    Render.setPixelRatio(render, 'auto')
+    Render.setPixelRatio(render, 'auto');
     // Render.lookAt(render, walls, Matter.Vector.create(500,500));
-    if(isMobile){
+    if (isMobile) {
       // Render.lookAt(render, mCenter);
-  }else{
-    // Render.lookAt(render, walls);
-    Render.lookAt(render, walls, {
-      x: 100,
-      y: 400
-    },true);
-  }
-    // Window event on rotate device. Only for mobile
-    window.addEventListener("orientationchange", function () {
-      var canvas = document.getElementById("matterjs");
-      var mattJSContainer = $('#matterjscontainer')
-      alert(mattJSContainer.innerWidth())
-      alert(window.innerWidth)
-      // canvas.width = window. 
-      render.canvas = canvas;
-      // render.options.height = window.innerWidth 
-      // render.options.width = window.innerHeight
-      // Matter.Runner.run(engine)
-      // Render.run(render);
-      Render.setPixelRatio(render, 'auto')
-      render.mouse = mouse;
-
-    }, false);
-
-    window.addEventListener('resize', () => {
+    } else {
+      // Render.lookAt(render, walls);
       Render.lookAt(render, walls, {
         x: 100,
         y: 400
       }, true);
-      
-      Render.setPixelRatio(render, 'auto')
-      var deep = false;
-        // if (isMobile) {
+    }
+    // Window event on rotate device. Only for mobile
+    window.addEventListener("orientationchange", function () {
+
+      location.reload();
+
+    }, false);
+
+    window.addEventListener('resize', () => {
+      if(!isMobile){
+        Render.lookAt(render, walls, {
+          x: 100,
+          y: 400
+        }, true);
+  
+        Render.setPixelRatio(render, 'auto')
+  
+
+      }
+
+
+      // if (isMobile) {
       //   return null
       // }
       // var canvas = document.getElementById("matterjs");
@@ -337,7 +461,7 @@ class TipJar extends React.Component {
       // render.options.height = a.height;
       // render.canvas.width = w;
       // render.canvas.height = h;
-      if(window.innerHeight < 500 || window.innerWidth < 725){
+      if (window.innerHeight < 500 || window.innerWidth < 725) {
         console.log('switch to mobile / compressed view')
       }
       console.log('changes')
@@ -345,13 +469,152 @@ class TipJar extends React.Component {
       //   x: 0,
       //   y: 400
       // });
-        });
+    });
+
+    // Will remove all bodies that are way off the screen.
+    async function removeBodiesOffScreen() {
+      const allObjects = Composite.allBodies(engine.world)
+      for (var bodyIndex in allObjects) {
+        const body = allObjects[bodyIndex]
+        // Body.setStatic(body, true);
+        // console.log(allObjects[bodyIndex].position.x)
+        if (body.position.x >= w * 5 || body.position.y >= h * 5) {
+          Matter.World.remove(engine.world, body)
+
+        }
+      }
+    }
+
+    // 
+    async function cleanUp(){
+      const cleanUpTimes = 5;
+      const cleanUpDelay = 5000 // 5 Seconds
+      for(var i = 0; i < cleanUpTimes; i++){
+        await new Promise(r => setTimeout(r, cleanUpDelay));
+
+        removeBodiesOffScreen()
+
+      }
+    }
+
+
+    Matter.Events.on(engine, 'collisionStart', async ({ pairs }) => {
+
+      pairs.forEach(async ({ bodyA, bodyB }) => {
+        var coinALabel = JSON.parse(bodyA.label);
+        var coinBLabel = JSON.parse(bodyB.label);
+
+        if(!isMobile && ( coinBLabel.type == DBEDROCK_LEVEL || bodyA.position.x >= w*3 || bodyA.position.h >= w*5)){
+          console.log('DELETED')
+          console.log(bodyA.id)
+          Matter.World.remove(engine.world, bodyA)
+          
+        }
+
+        if(!isMobile && (coinALabel.type == DBEDROCK_LEVEL || bodyB.position.x >= w*3 || bodyB.position.h >= w*5)){
+          console.log('DELETED')
+          console.log(bodyB.id)
+          Matter.World.remove(engine.world, bodyB)
+          
+        }
+
+        if(coinALabel.type === 'coin'){
+          if(coinALabel.fastSlow || isMobile){
+            await new Promise(r => setTimeout(r, 7500));
+          }else{
+            await new Promise(r => setTimeout(r, 30000));
+            console.log('BIG SLEEP')
+          }
+          if((bodyA.position.x >= lX*0.8 && bodyA.position.x <= rX*1.1 && 
+            (bodyA.position.y >= bWidth * 1)) || isMobile){
+            Body.setStatic(bodyA, true);
+
+            // Matter.Sleeping.set(bodyA, true)
+            // Matter.Composite.move(bodyA, [], tempBody)
+            // Body.setStatic(bodyA, false);
+
+          }
+
+        }
+
+        if(coinBLabel.type === 'coin'){
+          if(coinBLabel.fastSlow || isMobile){
+            await new Promise(r => setTimeout(r, 7500));
+          }else{
+            await new Promise(r => setTimeout(r, 30000));
+            console.log('BIG SLEEP 1')
+          }         
+          if((bodyB.position.x >= lX*0.9 && bodyB.position.x <= rX*1.1 && 
+            (bodyB.position.y >= bWidth * 1)) || isMobile ){
+            Body.setStatic(bodyB, true);
+
+          }
+        }
+
+   });
+  });
+
+//    Matter.Events.on(engine, 'collisionEnd', async ({ pairs }) => {
+//     await pairs.forEach(async ({ bodyA, bodyB }) => {
+//       // await new Promise(r => setTimeout(r, 5000));
+
+//       // if(bodyA.label === 'Circle Body' && bodyA.isStatic === false){
+//       //   Body.setStatic(bodyA, true);
+//       // }
+
+//       // if(bodyB.label === 'Circle Body' && bodyB.isStatic === false){
+//       //   Body.setStatic(bodyB, true);
+//       // }
+
+
+//       // if(bodyB.label === 'Circle Body'){
+//       //   Body.setStatic(bodyB, true);
+//       // }
+//       // Body.setStatic(bodyA, true);
+//       // Body.setStatic(bodyB, true);
+
+//       // if (bodyA !== ball) Matter.World.remove(world, bodyA);
+//       // if (bodyB !== ball) Matter.World.remove(world, bodyB);
+//    });
+//  });
+
+//  Matter.Events.on(engine, 'collisionStart', function(event) {
+//   const mouseX = mouse.position.x
+//   const mouseY = mouse.position.y
+//   const allObjects = Composite.allBodies(engine.world)
+
+//   const focusedCoins = Matter.Query.point(allObjects, {x: mouseX, y:mouseY});
+//   for (var coinIndex in focusedCoins) {
+//     const coin = focusedCoins[coinIndex]
+//     console.log(coin.label)
+//   }
+//   // do something with the pairs that have started collision
+// });
+
+  //   Events.on(mouseConstraint, 'mousedown', function(event) {
+  //     const mouseX = mouse.position.x
+  //     const mouseY = mouse.position.y
+  //     const allObjects = Composite.allBodies(engine.world)
+    
+  //     const focusedCoins = Matter.Query.point(allObjects, {x: mouseX, y:mouseY});
+  //     for (var coinIndex in focusedCoins) {
+  //       const coin = focusedCoins[coinIndex]
+  //       console.log(coin.label)
+  //     }
+  // });
+
+    await displayTipCoins()
+    cleanUp()
+
 
   }
+
+
 
   render() {
 
     return <div ref="TipJar" />;
+
   }
 }
 export default TipJar;
