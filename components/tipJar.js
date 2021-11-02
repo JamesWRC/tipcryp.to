@@ -53,7 +53,7 @@ class TipJar extends React.Component {
       engine: engine,
       
       options: {
-        wireframes: false,
+        wireframes: true,
         hasBounds: true,
         showSleeping: false,
         background: "transparent",
@@ -231,8 +231,30 @@ class TipJar extends React.Component {
       },
     });
 
+    const YOffset = isMobile ? 3 : 2
+    var mBottomY = ((mCenterY* YOffset) + 100)
+    if(w > h){
+      mBottomY-=30
+    }else{
+      mBottomY+=30
 
-    var mBedrock = Bodies.rectangle(w, (h+30*0.45), 10000, 30, {
+    }
+    var mBottom =Bodies.rectangle(mCenterX, mBottomY , 10000, 30, {
+      label: JSON.stringify({
+        name: 'mCBottom',
+        type: "wall",
+        fastSlow: false,
+      }),
+      isStatic: true,
+      restitution: 1,
+      render: {
+        fillStyle: 'transparent',
+        strokeStyle: 'transparent',
+      },
+    });
+
+
+    var mBedrock = Bodies.rectangle(mCenterX, mBottom.position.y*1.3, 999999, 30, {
       label: JSON.stringify({
         name: 'mBedrock',
         type: DBEDROCK_LEVEL,
@@ -246,13 +268,22 @@ class TipJar extends React.Component {
       },
     });
 
-    if (isMobile || (window.innerHeight < 500 && window.innerWidth < 725)) {
-      Composite.add(engine.world, mCenter);
-      Composite.add(engine.world, mBedrock);
-    } else {
-      desktopJar()
-      // Composite.add(engine.world, walls);
-    }
+
+    // var mBedrock = Bodies.rectangle(w, (h+30*0.45), 10000, 30, {
+    //   label: JSON.stringify({
+    //     name: 'mBedrock',
+    //     type: DBEDROCK_LEVEL,
+    //     fastSlow: false,
+    //   }),
+    //   isStatic: true,
+    //   restitution: rest,
+    //   render: {
+    //     fillStyle: 'transparent',
+    //     strokeStyle: 'transparent',
+    //   },
+    // });
+
+
 
     // var bedrock = Bodies.rectangle(w, canvas.height*1.15, w*h, boundaryThickness, { isStatic: true, 
     //   chamfer: {radius: [5, 5, 5, 5]},
@@ -407,8 +438,19 @@ class TipJar extends React.Component {
     Render.run(render);
     Render.setPixelRatio(render, 'auto');
     // Render.lookAt(render, walls, Matter.Vector.create(500,500));
-    if (isMobile) {
-      // Render.lookAt(render, mCenter);
+    if (isMobile || window.innerHeight < 500 || window.innerWidth < 725) {
+
+        if(w > h){
+          Render.lookAt(render, mCenter, {
+            x: 400,
+            y: 200
+          }, true);
+        }else{
+          Render.lookAt(render, mCenter, {
+            x: 100,
+            y: 400
+          }, true);
+        }
     } else {
       // Render.lookAt(render, walls);
       Render.lookAt(render, walls, {
@@ -433,38 +475,36 @@ class TipJar extends React.Component {
         Render.setPixelRatio(render, 'auto')
   
 
+      }else{
+      
+        // if (window.innerHeight < 500 || window.innerWidth < 725) {
+        //   console.log('switch to mobile / compressed view')
+        //   Render.lookAt(render, mCenter, {
+        //     x: 100,
+        //     y: 400
+        //   }, true);
+  
+        // }
+        // console.log('changes')
+        
+
+
+        if(w > h){
+          Render.lookAt(render, mCenter, {
+            x: 400,
+            y: 200
+          }, true);
+        }else{
+          Render.lookAt(render, mCenter, {
+            x: 100,
+            y: 400
+          }, true);
+        }
+
       }
 
 
-      // if (isMobile) {
-      //   return null
-      // }
-      // var canvas = document.getElementById("matterjs");
-      // var mattJSContainer = $('#matterjscontainer')
-      // render.canvas = canvas;
-      // render.options.height = mattJSContainer.height()
-      // render.options.width = mattJSContainer.width()
-      // // render.bounds.max.x = mattJSContainer.width()
-      // // render.bounds.max.y = mattJSContainer.height()
-      // Render.lookAt(render, walls, {
-      //   x: 10,
-      //   y: 400
-      // });
-      // render.mouse = mouse;
 
-      // mouse.pixelRatio = 1;
-      // console.log(mouseConstraint);
-      // var a = document.getElementById("matterjscontainer")
-
-
-      // render.options.width = a.width;
-      // render.options.height = a.height;
-      // render.canvas.width = w;
-      // render.canvas.height = h;
-      if (window.innerHeight < 500 || window.innerWidth < 725) {
-        console.log('switch to mobile / compressed view')
-      }
-      console.log('changes')
       // Render.lookAt(render, walls, {
       //   x: 0,
       //   y: 400
@@ -602,7 +642,14 @@ class TipJar extends React.Component {
   //       console.log(coin.label)
   //     }
   // });
-
+  if (isMobile || (window.innerHeight < 500 || window.innerWidth < 725)) {
+    Composite.add(engine.world, mCenter);
+    Composite.add(engine.world, mBottom);
+    Composite.add(engine.world, mBedrock);
+  } else {
+    desktopJar()
+    // Composite.add(engine.world, walls);
+  }
     await displayTipCoins()
     cleanUp()
 
