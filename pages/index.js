@@ -2,9 +2,14 @@ import Head from 'next/head'
 import Layout, { siteTitle } from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
 import { getSortedPostsData } from '../lib/posts'
+import Link from 'next/link'
 
 export default function Home({ allPostsData }) {
   return (
+    <>
+    <Link href="/about">
+    <a>About Us</a>
+  </Link>
     <Layout home>
       <Head>
         <title>{siteTitle}</title>
@@ -27,6 +32,7 @@ export default function Home({ allPostsData }) {
         </ul>
       </section>
     </Layout>
+    </>
   )
 }
 
