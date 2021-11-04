@@ -3,13 +3,17 @@ import Layout, { siteTitle } from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
 import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+
 
 export default function Home({ allPostsData }) {
+  const router = useRouter()
+  // const { pid } = router.query
+
   return (
     <>
-    <Link href="/about">
-    <a>About Us</a>
-  </Link>
+    <p>Post: {JSON.stringify(router.query)}</p>
+
     <Layout home>
       <Head>
         <title>{siteTitle}</title>
