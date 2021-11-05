@@ -28,6 +28,7 @@ export async function GetStaticPaths() {
     paths: [], //indicates that no page needs be created at build time
     fallback: 'blocking' //indicates the type of fallback
 }
+}
 
 export async function getStaticProps({ params }) {
 
@@ -39,4 +40,4 @@ export async function getStaticProps({ params }) {
 
 }
 
-}
+
