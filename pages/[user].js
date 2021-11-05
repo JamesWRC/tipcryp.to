@@ -22,15 +22,15 @@ export default Post
 // }
 // }
 
-// export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }) {
 
 
-//   return {
-//       props: {
-//         params
-//       }
-//   }
-// }
+  return {
+      props: {
+        params
+      }
+  }
+}
 export async function GetStaticPaths() {
 
 
