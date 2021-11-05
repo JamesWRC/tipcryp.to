@@ -21,7 +21,8 @@ export default Post
 //     fallback: false
 // }
 // }
-export async function getStaticPaths() {
+
+export async function GetStaticPaths() {
 
 
   return {
@@ -29,15 +30,4 @@ export async function getStaticPaths() {
     fallback: 'blocking' //indicates the type of fallback
 }
 }
-
-export async function getStaticProps({ params }) {
-
-  return {
-      props: {
-        params
-      }
-  }
-
-}
-
 
