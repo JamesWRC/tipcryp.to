@@ -24,12 +24,12 @@ export default Post
 
 export async function getStaticProps({ params }) {
 
-
   return {
       props: {
         params
       }
   }
+
 }
 export async function GetStaticPaths() {
 
@@ -38,4 +38,5 @@ export async function GetStaticPaths() {
     paths: [], //indicates that no page needs be created at build time
     fallback: 'blocking' //indicates the type of fallback
 }
+
 }
