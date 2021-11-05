@@ -1,34 +1,48 @@
+import Link from 'next/link'
 import Head from 'next/head'
 
-import Post from '../components/post'
-
-export async function getStaticProps() {
-  // fetch list of posts
+export async function getStaticPaths() {
   const response = await fetch(
     'https://jsonplaceholder.typicode.com/posts?_page=1'
   )
   const postList = await response.json()
   return {
-    props: {
-      postList,
-    },
+    paths: postList.map((post) => {
+      return {
+        params: {
+          id: `${post.id}`,
+        },
+      }
+    }),
+    fallback: false,
   }
 }
 
-export default function IndexPage({ postList }) {
+export async function getStaticProps({ params }) {
+  // fetch single post detail
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/posts/${params.id}`
+  )
+  const post = await response.json()
+  return {
+    props: post,
+  }
+}
+
+export default function Post({ title, body }) {
   return (
     <main>
       <Head>
-        <title>Home page</title>
+        <title>{title}</title>
       </Head>
 
-      <h1>List of posts</h1>
+      <h1>{title}</h1>
 
-      <section>
-        {postList.map((post) => (
-          <Post {...post} key={post.id} />
-        ))}
-      </section>
+      <p>{body}</p>
+
+      <Link href="/">
+        <a>Go back to home</a>
+      </Link>
     </main>
   )
 }
