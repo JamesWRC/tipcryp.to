@@ -21,7 +21,7 @@ export default Post
 //     fallback: false
 // }
 // }
-export async function GetStaticPaths() {
+export async function getStaticPaths() {
 
 
   return {
