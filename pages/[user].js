@@ -7,9 +7,19 @@ const Post = () => {
   const router = useRouter()
   const user = router.query.user
 
-  return <p>user: {user}</p>
+  return <p>user: 'hello'</p>
 
 }
 
 export default Post
 
+
+
+export async function GetStaticPaths() {
+
+
+  return {
+    paths: [], //indicates that no page needs be created at build time
+    fallback: 'blocking' //indicates the type of fallback
+}
+}

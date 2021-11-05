@@ -5,22 +5,6 @@ import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-export async function getStaticPaths() {
-  const paths = [
-    {
-      params: { slug: [] },
-    },
-    {
-      params: { slug: ["home"] },
-    },
-    {
-      params: { slug: ["home", "page"] },
-    },
-  ];
-  return { paths, fallback: false };
-}
-
-
 export default function Home({ allPostsData }) {
   const router = useRouter()
   // const { pid } = router.query
