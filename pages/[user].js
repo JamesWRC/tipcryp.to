@@ -15,11 +15,12 @@ export default Post
 
 
 
-export async function GetStaticPaths() {
+export async function getStaticProps({ params }) {
 
 
   return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking' //indicates the type of fallback
-}
+      props: {
+        params
+      }
+  }
 }
