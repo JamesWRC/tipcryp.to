@@ -14,20 +14,28 @@ const Post = () => {
 export default Post
 
 
-export async function getStaticPaths() {
+// export async function getStaticPaths() {
+
+//   return {
+//     paths: [], //indicates that no page needs be created at build time
+//     fallback: false
+// }
+// }
+
+// export async function getStaticProps({ params }) {
+
+
+//   return {
+//       props: {
+//         params
+//       }
+//   }
+// }
+export async function GetStaticPaths() {
+
 
   return {
     paths: [], //indicates that no page needs be created at build time
-    fallback: true
+    fallback: 'blocking' //indicates the type of fallback
 }
-}
-
-export async function getStaticProps({ params }) {
-
-
-  return {
-      props: {
-        params
-      }
-  }
 }
