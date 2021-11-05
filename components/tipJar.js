@@ -16,7 +16,7 @@ class TipJar extends React.Component {
   }
 
   async componentDidMount() {
-    
+
     var Engine = Matter.Engine,
       Render = Matter.Render,
       Bodies = Matter.Bodies,
@@ -51,7 +51,7 @@ class TipJar extends React.Component {
     var render = Render.create({
       canvas: canvas,
       engine: engine,
-      
+
       options: {
         wireframes: true,
         hasBounds: true,
@@ -174,7 +174,7 @@ class TipJar extends React.Component {
 
       Composite.add(engine.world, walls);
 
-      var dBedrock = Bodies.rectangle(bottomBottom.position.x, bottomBottom.position.y*4, 99999, 20, {
+      var dBedrock = Bodies.rectangle(bottomBottom.position.x, bottomBottom.position.y * 4, 99999, 20, {
         label: JSON.stringify({
           name: 'dBedrock',
           type: DBEDROCK_LEVEL,
@@ -232,14 +232,14 @@ class TipJar extends React.Component {
     });
 
     const YOffset = isMobile ? 3 : 2
-    var mBottomY = ((mCenterY* YOffset) + 100)
-    if(w > h){
-      mBottomY-=30
-    }else{
-      mBottomY+=30
+    var mBottomY = ((mCenterY * YOffset) + 100)
+    if (w > h) {
+      mBottomY -= 30
+    } else {
+      mBottomY += 30
 
     }
-    var mBottom =Bodies.rectangle(mCenterX, mBottomY , 10000, 30, {
+    var mBottom = Bodies.rectangle(mCenterX, mBottomY, 10000, 30, {
       label: JSON.stringify({
         name: 'mCBottom',
         type: "wall",
@@ -254,7 +254,7 @@ class TipJar extends React.Component {
     });
 
 
-    var mBedrock = Bodies.rectangle(mCenterX, mBottom.position.y*1.3, 999999, 30, {
+    var mBedrock = Bodies.rectangle(mCenterX, mBottom.position.y * 1.3, 999999, 30, {
       label: JSON.stringify({
         name: 'mBedrock',
         type: DBEDROCK_LEVEL,
@@ -367,12 +367,12 @@ class TipJar extends React.Component {
           type: 'coin',
           fastSlow: true,
         }
-        if(i >= maxCoins*0.9){
+        if (i >= maxCoins * 0.9) {
           // coin.restitution = 0.03
           coinLabel.fastSlow = false
         }
 
-        if(isMobile){
+        if (isMobile) {
           coin.restitution = 0.5
         }
 
@@ -438,26 +438,7 @@ class TipJar extends React.Component {
     Render.run(render);
     Render.setPixelRatio(render, 'auto');
     // Render.lookAt(render, walls, Matter.Vector.create(500,500));
-    if (isMobile || window.innerHeight < 500 || window.innerWidth < 725) {
 
-        if(w > h){
-          Render.lookAt(render, mCenter, {
-            x: 400,
-            y: 200
-          }, true);
-        }else{
-          Render.lookAt(render, mCenter, {
-            x: 100,
-            y: 400
-          }, true);
-        }
-    } else {
-      // Render.lookAt(render, walls);
-      Render.lookAt(render, walls, {
-        x: 100,
-        y: 400
-      }, true);
-    }
     // Window event on rotate device. Only for mobile
     window.addEventListener("orientationchange", function () {
 
@@ -466,35 +447,34 @@ class TipJar extends React.Component {
     }, false);
 
     window.addEventListener('resize', () => {
-      if(!isMobile){
+      if (!isMobile) {
         Render.lookAt(render, walls, {
           x: 100,
           y: 400
         }, true);
-  
-        Render.setPixelRatio(render, 'auto')
-  
 
-      }else{
-      
+        Render.setPixelRatio(render, 'auto')
+
+      } else {
+
         // if (window.innerHeight < 500 || window.innerWidth < 725) {
         //   console.log('switch to mobile / compressed view')
         //   Render.lookAt(render, mCenter, {
         //     x: 100,
         //     y: 400
         //   }, true);
-  
+
         // }
         // console.log('changes')
-        
 
 
-        if(w > h){
+
+        if (w > h) {
           Render.lookAt(render, mCenter, {
             x: 400,
             y: 200
           }, true);
-        }else{
+        } else {
           Render.lookAt(render, mCenter, {
             x: 100,
             y: 400
@@ -526,10 +506,10 @@ class TipJar extends React.Component {
     }
 
     // 
-    async function cleanUp(){
+    async function cleanUp() {
       const cleanUpTimes = 5;
       const cleanUpDelay = 5000 // 5 Seconds
-      for(var i = 0; i < cleanUpTimes; i++){
+      for (var i = 0; i < cleanUpTimes; i++) {
         await new Promise(r => setTimeout(r, cleanUpDelay));
 
         removeBodiesOffScreen()
@@ -544,29 +524,29 @@ class TipJar extends React.Component {
         var coinALabel = JSON.parse(bodyA.label);
         var coinBLabel = JSON.parse(bodyB.label);
 
-        if(!isMobile && ( coinBLabel.type == DBEDROCK_LEVEL || bodyA.position.x >= w*3 || bodyA.position.h >= w*5)){
+        if (!isMobile && (coinBLabel.type == DBEDROCK_LEVEL || bodyA.position.x >= w * 3 || bodyA.position.h >= w * 5)) {
           console.log('DELETED')
           console.log(bodyA.id)
           Matter.World.remove(engine.world, bodyA)
-          
+
         }
 
-        if(!isMobile && (coinALabel.type == DBEDROCK_LEVEL || bodyB.position.x >= w*3 || bodyB.position.h >= w*5)){
+        if (!isMobile && (coinALabel.type == DBEDROCK_LEVEL || bodyB.position.x >= w * 3 || bodyB.position.h >= w * 5)) {
           console.log('DELETED')
           console.log(bodyB.id)
           Matter.World.remove(engine.world, bodyB)
-          
+
         }
 
-        if(coinALabel.type === 'coin'){
-          if(coinALabel.fastSlow || isMobile){
+        if (coinALabel.type === 'coin') {
+          if (coinALabel.fastSlow || isMobile) {
             await new Promise(r => setTimeout(r, 7500));
-          }else{
+          } else {
             await new Promise(r => setTimeout(r, 30000));
             console.log('BIG SLEEP')
           }
-          if((bodyA.position.x >= lX*0.8 && bodyA.position.x <= rX*1.1 && 
-            (bodyA.position.y >= bWidth * 1)) || isMobile){
+          if ((bodyA.position.x >= lX * 0.8 && bodyA.position.x <= rX * 1.1 &&
+            (bodyA.position.y >= bWidth * 1)) || isMobile) {
             Body.setStatic(bodyA, true);
 
             // Matter.Sleeping.set(bodyA, true)
@@ -577,79 +557,103 @@ class TipJar extends React.Component {
 
         }
 
-        if(coinBLabel.type === 'coin'){
-          if(coinBLabel.fastSlow || isMobile){
+        if (coinBLabel.type === 'coin') {
+          if (coinBLabel.fastSlow || isMobile) {
             await new Promise(r => setTimeout(r, 7500));
-          }else{
+          } else {
             await new Promise(r => setTimeout(r, 30000));
             console.log('BIG SLEEP 1')
-          }         
-          if((bodyB.position.x >= lX*0.9 && bodyB.position.x <= rX*1.1 && 
-            (bodyB.position.y >= bWidth * 1)) || isMobile ){
+          }
+          if ((bodyB.position.x >= lX * 0.9 && bodyB.position.x <= rX * 1.1 &&
+            (bodyB.position.y >= bWidth * 1)) || isMobile) {
             Body.setStatic(bodyB, true);
 
           }
         }
 
-   });
-  });
+      });
+    });
 
-//    Matter.Events.on(engine, 'collisionEnd', async ({ pairs }) => {
-//     await pairs.forEach(async ({ bodyA, bodyB }) => {
-//       // await new Promise(r => setTimeout(r, 5000));
+    //    Matter.Events.on(engine, 'collisionEnd', async ({ pairs }) => {
+    //     await pairs.forEach(async ({ bodyA, bodyB }) => {
+    //       // await new Promise(r => setTimeout(r, 5000));
 
-//       // if(bodyA.label === 'Circle Body' && bodyA.isStatic === false){
-//       //   Body.setStatic(bodyA, true);
-//       // }
+    //       // if(bodyA.label === 'Circle Body' && bodyA.isStatic === false){
+    //       //   Body.setStatic(bodyA, true);
+    //       // }
 
-//       // if(bodyB.label === 'Circle Body' && bodyB.isStatic === false){
-//       //   Body.setStatic(bodyB, true);
-//       // }
+    //       // if(bodyB.label === 'Circle Body' && bodyB.isStatic === false){
+    //       //   Body.setStatic(bodyB, true);
+    //       // }
 
 
-//       // if(bodyB.label === 'Circle Body'){
-//       //   Body.setStatic(bodyB, true);
-//       // }
-//       // Body.setStatic(bodyA, true);
-//       // Body.setStatic(bodyB, true);
+    //       // if(bodyB.label === 'Circle Body'){
+    //       //   Body.setStatic(bodyB, true);
+    //       // }
+    //       // Body.setStatic(bodyA, true);
+    //       // Body.setStatic(bodyB, true);
 
-//       // if (bodyA !== ball) Matter.World.remove(world, bodyA);
-//       // if (bodyB !== ball) Matter.World.remove(world, bodyB);
-//    });
-//  });
+    //       // if (bodyA !== ball) Matter.World.remove(world, bodyA);
+    //       // if (bodyB !== ball) Matter.World.remove(world, bodyB);
+    //    });
+    //  });
 
-//  Matter.Events.on(engine, 'collisionStart', function(event) {
-//   const mouseX = mouse.position.x
-//   const mouseY = mouse.position.y
-//   const allObjects = Composite.allBodies(engine.world)
+    //  Matter.Events.on(engine, 'collisionStart', function(event) {
+    //   const mouseX = mouse.position.x
+    //   const mouseY = mouse.position.y
+    //   const allObjects = Composite.allBodies(engine.world)
 
-//   const focusedCoins = Matter.Query.point(allObjects, {x: mouseX, y:mouseY});
-//   for (var coinIndex in focusedCoins) {
-//     const coin = focusedCoins[coinIndex]
-//     console.log(coin.label)
-//   }
-//   // do something with the pairs that have started collision
-// });
+    //   const focusedCoins = Matter.Query.point(allObjects, {x: mouseX, y:mouseY});
+    //   for (var coinIndex in focusedCoins) {
+    //     const coin = focusedCoins[coinIndex]
+    //     console.log(coin.label)
+    //   }
+    //   // do something with the pairs that have started collision
+    // });
 
-  //   Events.on(mouseConstraint, 'mousedown', function(event) {
-  //     const mouseX = mouse.position.x
-  //     const mouseY = mouse.position.y
-  //     const allObjects = Composite.allBodies(engine.world)
-    
-  //     const focusedCoins = Matter.Query.point(allObjects, {x: mouseX, y:mouseY});
-  //     for (var coinIndex in focusedCoins) {
-  //       const coin = focusedCoins[coinIndex]
-  //       console.log(coin.label)
-  //     }
-  // });
-  if (isMobile || (window.innerHeight < 500 || window.innerWidth < 725)) {
-    Composite.add(engine.world, mCenter);
-    Composite.add(engine.world, mBottom);
-    Composite.add(engine.world, mBedrock);
-  } else {
-    desktopJar()
-    // Composite.add(engine.world, walls);
-  }
+    //   Events.on(mouseConstraint, 'mousedown', function(event) {
+    //     const mouseX = mouse.position.x
+    //     const mouseY = mouse.position.y
+    //     const allObjects = Composite.allBodies(engine.world)
+
+    //     const focusedCoins = Matter.Query.point(allObjects, {x: mouseX, y:mouseY});
+    //     for (var coinIndex in focusedCoins) {
+    //       const coin = focusedCoins[coinIndex]
+    //       console.log(coin.label)
+    //     }
+    // });
+    if (isMobile || (window.innerHeight < 500 || window.innerWidth < 725)) {
+      Composite.add(engine.world, mCenter);
+      Composite.add(engine.world, mBottom);
+      Composite.add(engine.world, mBedrock);
+    } else {
+      desktopJar()
+      // Composite.add(engine.world, walls);
+    }
+
+
+    if (isMobile || (window.innerHeight < 500 || window.innerWidth < 725)) {
+
+      if (w > h) {
+        Render.lookAt(render, mCenter, {
+          x: 400,
+          y: 200
+        }, true);
+      } else {
+        Render.lookAt(render, mCenter, {
+          x: 100,
+          y: 400
+        }, true);
+      }
+
+    } else {
+      // Render.lookAt(render, walls);
+      Render.lookAt(render, walls, {
+        x: 100,
+        y: 400
+      }, true);
+    }
+
     await displayTipCoins()
     cleanUp()
 

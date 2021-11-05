@@ -1,5 +1,7 @@
 
 import { Fragment, useRef } from 'react'
+import { useRouter } from 'next/router'
+
 import { Menu, Popover, Transition } from '@headlessui/react'
 import { SearchIcon } from '@heroicons/react/solid'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
@@ -31,6 +33,9 @@ function classNames(...classes) {
 }
 
 export default function TipJarLayout(props) {
+  const router = useRouter()
+  const jar = router.query.jar
+
   const matterJSContainerRef = useRef(null);
   return (
     <div className="min-h-screen bg-gray-100">
@@ -250,6 +255,7 @@ export default function TipJarLayout(props) {
           </div>
           <aside className="lg:col-span-4 xl:col-span-4 border-2 border-dashed border-gray-300 rounded-lg">
             <main className="sticky top-6 space-y-4 ">
+              <h1>showing jar: {jar}</h1>
             What is Lorem Ipsum?
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 
