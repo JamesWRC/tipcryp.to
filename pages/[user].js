@@ -21,6 +21,13 @@ export default Post
 //     fallback: false
 // }
 // }
+export async function GetStaticPaths() {
+
+
+  return {
+    paths: [], //indicates that no page needs be created at build time
+    fallback: 'blocking' //indicates the type of fallback
+}
 
 export async function getStaticProps({ params }) {
 
@@ -30,13 +37,6 @@ export async function getStaticProps({ params }) {
       }
   }
 
-}
-export async function GetStaticPaths() {
-
-
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking' //indicates the type of fallback
 }
 
 }
