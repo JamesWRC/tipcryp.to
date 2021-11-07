@@ -53,7 +53,7 @@ class TipJar extends React.Component {
       engine: engine,
 
       options: {
-        wireframes: true,
+        wireframes: false,
         hasBounds: true,
         showSleeping: false,
         background: "transparent",
