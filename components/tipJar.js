@@ -199,8 +199,8 @@ class TipJar extends React.Component {
           category: 'no-collide'
         },
         render: {
-          fillStyle: 'red',
-          strokeStyle: 'red',
+          fillStyle: 'transparent',
+          strokeStyle: 'transparent',
         },
       });
 
