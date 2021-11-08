@@ -1,30 +1,21 @@
 import { useRouter } from 'next/router'
 import TipJarLayout from '../../components/tipLayout'
-import TipJar from '../../components/tipJar'
+import UserSettings from '../[user]/settings/[...settings]'
 const Post = () => {
   const router = useRouter()
-  const user = router.query.user 
+  const userName = router.query.user
   const jar = router.query.jar ? router.query.jar : 'none' // should add a jar not found kinda thing here
-//   return <p>jar: {user} {jar}</p>
-return <>
+  //   return <p>jar: {user} {jar}</p>
 
-  <TipJarLayout></TipJarLayout>
+  if (router.asPath === `/${userName}/settings`) {
+    return <UserSettings/>;
+  }else{
+    return <TipJarLayout/>
+  }
 
-</>
 
-// return <TipJar></TipJar>
+  // return <TipJar></TipJar>
 
 }
 
 export default Post
-
-
-
-export async function GetStaticPaths() {
-
-
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking' //indicates the type of fallback
-}
-}
